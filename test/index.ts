@@ -19,4 +19,15 @@ describe("PaymentSplitter", function () {
     expect(await contract.totalShares()).to.equal(100);
     expect(await contract["totalReleased()"]()).to.equal(0);
   });
+
+  it("Should revert because of payees and shares mismatch", async function () {
+    const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
+    const adresses = ["0x9b5ebc2234d4cd089b24f0d8269e6fe7e056bed2"];
+    const shares = [25, 25, 25, 25];
+
+    await expect(PaymentSplitter.deploy(adresses, shares)).to.be.reverted;
+    await expect(PaymentSplitter.deploy(adresses, shares)).to.be.revertedWith(
+      "PaymentSplitter: payees and shares length mismatch"
+    );
+  });
 });
