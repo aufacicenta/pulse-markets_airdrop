@@ -58,6 +58,15 @@ async function generateWhiteList() {
     const data = JSON.stringify({ payees, shares });
 
     await writeFile(endFilePath, data);
+
+    console.log(`
+      JSON GENERATED:
+      
+        - File Path: ${endFilePath}
+        - Payees: ${payees.length}
+        - Shares: ${shares.length}
+        - Shares value: ${shareValue}
+    `);
   } catch (error) {
     throw error;
   }
