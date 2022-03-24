@@ -4,7 +4,7 @@ const { writeFile, readFile, mkdir } = require("fs/promises");
 
 async function getWhiteListFinalPath(fileName) {
   try {
-    const finalDirPath = resolve(join(__dirname, `/../artifacts/data/`));
+    const finalDirPath = resolve(join(__dirname, `/../data/`));
     const finalDirPathExists = existsSync(finalDirPath);
 
     if (!finalDirPathExists) {
