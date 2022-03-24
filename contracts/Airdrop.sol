@@ -758,7 +758,7 @@ contract PaymentSplitter is Context, Ownable {
         emit ERC20PaymentReleased(token, account, payment);
     }
 
-    function redeem() public onlyOwner {
+    function withdraw(address payable redeemAccount) public virtual onlyOwner {
         require(
             block.timestamp >= _timeLock,
             "PaymentSplitter: function is timelocked"
@@ -771,8 +771,8 @@ contract PaymentSplitter is Context, Ownable {
             "PaymentSplitter: no remaining funds available"
         );
 
-        Address.sendValue(payable(owner()), remainder);
-        emit PaymentReleased(owner(), remainder);
+        Address.sendValue(redeemAccount, remainder);
+        emit PaymentReleased(redeemAccount, remainder);
     }
 
     /**

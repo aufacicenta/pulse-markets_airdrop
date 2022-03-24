@@ -40,8 +40,8 @@ describe("PaymentSplitter", function () {
     expect(await waffle.provider.getBalance(contract.address)).to.equal(
       contractBalance
     );
-    await expect(contract.redeem()).to.be.reverted;
-    await expect(contract.redeem()).to.be.revertedWith(
+    await expect(contract.withdraw(owner.address)).to.be.reverted;
+    await expect(contract.withdraw(owner.address)).to.be.revertedWith(
       "PaymentSplitter: function is timelocked"
     );
   });
@@ -59,8 +59,8 @@ describe("PaymentSplitter", function () {
 
     expect(await contract.owner()).to.equal(owner.address);
     expect(await waffle.provider.getBalance(contract.address)).to.equal(0);
-    await expect(contract.redeem()).to.be.reverted;
-    await expect(contract.redeem()).to.be.revertedWith(
+    await expect(contract.withdraw(owner.address)).to.be.reverted;
+    await expect(contract.withdraw(owner.address)).to.be.revertedWith(
       "PaymentSplitter: no remaining funds available"
     );
   });
@@ -87,7 +87,7 @@ describe("PaymentSplitter", function () {
       contractBalance
     );
 
-    await contract.redeem();
+    await contract.withdraw(owner.address);
 
     expect(await waffle.provider.getBalance(contract.address)).to.equal(0);
   });
@@ -95,7 +95,7 @@ describe("PaymentSplitter", function () {
   it("Should revert since caller is not owner", async function () {
     const contractBalance = 1;
     const oneYearFromNow = moment().add(365, "days").unix();
-    const [owner, address1] = await ethers.getSigners();
+    const [owner, account1] = await ethers.getSigners();
     const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
     const contract = await PaymentSplitter.deploy(
       ["0x9b5ebc2234d4cd089b24f0d8269e6fe7e056bed2"],
@@ -109,9 +109,10 @@ describe("PaymentSplitter", function () {
     });
     await ethers.provider.send("evm_increaseTime", [oneYearFromNow]);
 
-    await expect(contract.connect(address1).redeem()).to.be.reverted;
-    await expect(contract.connect(address1).redeem()).to.be.revertedWith(
-      "Ownable: caller is not the owner"
-    );
+    await expect(contract.connect(account1).withdraw(account1.address)).to.be
+      .reverted;
+    await expect(
+      contract.connect(account1).withdraw(account1.address)
+    ).to.be.revertedWith("Ownable: caller is not the owner");
   });
 });
