@@ -91,4 +91,27 @@ describe("PaymentSplitter", function () {
 
     expect(await waffle.provider.getBalance(contract.address)).to.equal(0);
   });
+
+  it("Should revert since caller is not owner", async function () {
+    const contractBalance = 1;
+    const oneYearFromNow = moment().add(365, "days").unix();
+    const [owner, address1] = await ethers.getSigners();
+    const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
+    const contract = await PaymentSplitter.deploy(
+      ["0x9b5ebc2234d4cd089b24f0d8269e6fe7e056bed2"],
+      [1]
+    );
+
+    await owner.sendTransaction({
+      from: owner.address,
+      to: contract.address,
+      value: contractBalance,
+    });
+    await ethers.provider.send("evm_increaseTime", [oneYearFromNow]);
+
+    await expect(contract.connect(address1).redeem()).to.be.reverted;
+    await expect(contract.connect(address1).redeem()).to.be.revertedWith(
+      "Ownable: caller is not the owner"
+    );
+  });
 });
