@@ -3,31 +3,23 @@ const { resolve, join } = require("path");
 const { writeFile, readFile, mkdir } = require("fs/promises");
 
 async function getWhiteListFinalPath(fileName) {
-  try {
-    const finalDirPath = resolve(join(__dirname, `/../data/`));
-    const finalDirPathExists = existsSync(finalDirPath);
+  const finalDirPath = resolve(join(__dirname, `/../data/`));
+  const finalDirPathExists = existsSync(finalDirPath);
 
-    if (!finalDirPathExists) {
-      await mkdir(finalDirPath);
-    }
-
-    const finalPath = join(finalDirPath, fileName);
-
-    return finalPath;
-  } catch (error) {
-    throw error;
+  if (!finalDirPathExists) {
+    await mkdir(finalDirPath);
   }
+
+  const finalPath = join(finalDirPath, fileName);
+
+  return finalPath;
 }
 
 async function getPayeesFromFile(dataSourceFilePath) {
-  try {
-    const payeesData = await readFile(dataSourceFilePath);
-    const payees = JSON.parse(payeesData.toString("UTF-8"));
+  const payeesData = await readFile(dataSourceFilePath);
+  const payees = JSON.parse(payeesData.toString("UTF-8"));
 
-    return payees;
-  } catch (error) {
-    throw error;
-  }
+  return payees;
 }
 
 function calculateShares(payees, shareValue) {
@@ -61,14 +53,14 @@ async function generateWhiteList() {
 
     console.log(`
       JSON GENERATED:
-      
+
         - File Path: ${endFilePath}
         - Payees: ${payees.length}
         - Shares: ${shares.length}
         - Shares value: ${shareValue}
     `);
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }
 
