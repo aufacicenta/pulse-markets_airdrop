@@ -20,5 +20,6 @@ module.exports = {
       "error",
       { ignores: ["modules"] },
     ],
+    "node/no-unsupported-features/es-builtins": ["off"],
   },
 };
