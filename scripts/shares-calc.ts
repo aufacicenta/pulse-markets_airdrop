@@ -3,41 +3,22 @@ import wpGas from "../data/wpGas.json";
 const { join } = require("path");
 const { writeFile } = require("fs/promises");
 
-const addressToSharesMap = new Map<string, number>();
-let totalGas = 0;
+const payeesSet = new Set<string>();
+
+// 50K USD > ETH at Mar 27, 2022 23:12 CST
+const totalGas = BigInt(15110000000000000000);
 
 type SharesOfPayess = { payees: string[]; shares: number[] };
 
-function mapAddressToEstimatedGas({
-  address,
-  estimateGasPaid,
-}: {
-  address: string;
-  estimateGasPaid: string;
-}) {
-  const gas = addressToSharesMap.get(address);
-
-  let amount = 0;
-  if (gas) {
-    amount = Number(gas) + Number(estimateGasPaid);
-    addressToSharesMap.set(address, amount);
-  } else {
-    amount = Number(estimateGasPaid);
-    addressToSharesMap.set(address, amount);
-  }
-
-  totalGas = totalGas + amount;
-}
-
-function createPayeesAndSharesObject() {
+function createPayeesAndSharesObject(amount: string) {
   const data: SharesOfPayess = {
     payees: [],
     shares: [],
   };
 
-  for (const [address, amount] of addressToSharesMap.entries()) {
+  for (const address of payeesSet) {
     data.payees.push(address);
-    data.shares.push(amount);
+    data.shares.push(Number(amount));
   }
 
   console.log({
@@ -55,15 +36,19 @@ async function writeWhitelistFile(data: string) {
 }
 
 for (const item of spGas) {
-  mapAddressToEstimatedGas(item);
+  payeesSet.add(item.address);
 }
 
 for (const item of wpGas) {
-  mapAddressToEstimatedGas(item);
+  payeesSet.add(item.address);
 }
 
+const shares = totalGas / BigInt(payeesSet.size);
+
 (async () => {
-  await writeWhitelistFile(JSON.stringify(createPayeesAndSharesObject()));
+  await writeWhitelistFile(
+    JSON.stringify(createPayeesAndSharesObject(shares.toString()))
+  );
 })();
 
-console.log({ totalGas });
+console.log({ totalGas: totalGas.toString() });
