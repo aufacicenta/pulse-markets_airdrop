@@ -10,7 +10,7 @@ const totalGas = BigInt(15110000000000000000);
 
 type SharesOfPayess = { payees: string[]; shares: number[] };
 
-function createPayeesAndSharesObject(amount: string) {
+function createPayeesAndSharesObject(amount: number) {
   const data: SharesOfPayess = {
     payees: [],
     shares: [],
@@ -18,7 +18,7 @@ function createPayeesAndSharesObject(amount: string) {
 
   for (const address of payeesSet) {
     data.payees.push(address);
-    data.shares.push(Number(amount));
+    data.shares.push(amount);
   }
 
   console.log({
@@ -43,12 +43,8 @@ for (const item of wpGas) {
   payeesSet.add(item.address);
 }
 
-const shares = totalGas / BigInt(payeesSet.size);
-
 (async () => {
-  await writeWhitelistFile(
-    JSON.stringify(createPayeesAndSharesObject(shares.toString()))
-  );
+  await writeWhitelistFile(JSON.stringify(createPayeesAndSharesObject(1)));
 })();
 
 console.log({ totalGas: totalGas.toString() });
