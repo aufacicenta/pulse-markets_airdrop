@@ -44,6 +44,13 @@ const config: HardhatUserConfig = {
       chainId: 1313161555,
       gasPrice: 120 * 1000000000,
     },
+    aurora: {
+      url: "https://mainnet.aurora.dev",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      chainId: 1313161554,
+      gasPrice: 120 * 1000000000,
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,

@@ -9,3 +9,20 @@ Simply:
 3. No errors should be logged
 4. Connect to the Aurora Testnet network via metamask
 5. Deploy the contract and interact with it
+
+## Mainnet Deployment
+
+First, set your `.env` file values:
+
+```
+PRIVATE_KEY=...
+```
+
+In the CLI, run:
+
+```
+source .env
+npx hardhat run --network aurora scripts/deploy.ts
+```
+
+Done.
