@@ -613,6 +613,7 @@ contract PaymentSplitter is Context, Ownable {
     uint256 private _totalShares;
     uint256 private _totalReleased;
     uint256 private _timeLock;
+    uint256 private _payeesLengthLimit = 546;
 
     mapping(address => uint256) private _shares;
     mapping(address => uint256) private _released;
@@ -770,7 +771,7 @@ contract PaymentSplitter is Context, Ownable {
         onlyOwner
     {
         require(
-            _payees.length <= 546,
+            _payees.length <= _payeesLengthLimit,
             "PaymentSplitter: contract is already setup"
         );
 
