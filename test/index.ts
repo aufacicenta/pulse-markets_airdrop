@@ -6,7 +6,7 @@ import { PaymentSplitter } from "../typechain";
 describe("PaymentSplitter", function () {
   let contract: PaymentSplitter;
 
-  this.beforeAll(async () => {
+  this.beforeEach(async () => {
     const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
     contract = await PaymentSplitter.deploy();
     const payees = [
@@ -29,8 +29,6 @@ describe("PaymentSplitter", function () {
   it("Should revert because of timelocked function", async function () {
     const contractBalance = 1;
     const [owner] = await ethers.getSigners();
-    const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
-    const contract = await PaymentSplitter.deploy();
 
     await owner.sendTransaction({
       from: owner.address,
@@ -51,8 +49,6 @@ describe("PaymentSplitter", function () {
   it("Should revert because of no remaining funds available", async function () {
     const oneYearFromNow = moment().add(365, "days").unix();
     const [owner] = await ethers.getSigners();
-    const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
-    const contract = await PaymentSplitter.deploy();
 
     await ethers.provider.send("evm_increaseTime", [oneYearFromNow]);
 
@@ -68,8 +64,6 @@ describe("PaymentSplitter", function () {
     const contractBalance = 1;
     const oneYearFromNow = moment().add(365, "days").unix();
     const [owner] = await ethers.getSigners();
-    const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
-    const contract = await PaymentSplitter.deploy();
 
     await owner.sendTransaction({
       from: owner.address,
@@ -92,8 +86,6 @@ describe("PaymentSplitter", function () {
     const contractBalance = 1;
     const oneYearFromNow = moment().add(365, "days").unix();
     const [owner, account1] = await ethers.getSigners();
-    const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
-    const contract = await PaymentSplitter.deploy();
 
     await owner.sendTransaction({
       from: owner.address,
