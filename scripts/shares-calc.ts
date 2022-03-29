@@ -10,13 +10,19 @@ const totalGas = BigInt(15110000000000000000);
 
 type SharesOfPayess = { payees: string[]; shares: number[] };
 
-function createPayeesAndSharesObject(amount: number) {
+function createPayeesAndSharesObject(
+  amount: number,
+  start: number,
+  end: number
+) {
+  const payees = Array.from(payeesSet).slice(start, end);
+
   const data: SharesOfPayess = {
     payees: [],
     shares: [],
   };
 
-  for (const address of payeesSet) {
+  for (const address of payees) {
     data.payees.push(address);
     data.shares.push(amount);
   }
@@ -30,8 +36,8 @@ function createPayeesAndSharesObject(amount: number) {
   return data;
 }
 
-async function writeWhitelistFile(data: string) {
-  const file = join(__dirname, `/../data/whitelist.json`);
+async function writeWhitelistFile(data: string, id: string) {
+  const file = join(__dirname, `/../data/whitelist-${id}.json`);
   await writeFile(file, data);
 }
 
@@ -44,7 +50,30 @@ for (const item of wpGas) {
 }
 
 (async () => {
-  await writeWhitelistFile(JSON.stringify(createPayeesAndSharesObject(1)));
+  await writeWhitelistFile(
+    JSON.stringify(createPayeesAndSharesObject(1, 0, 91)),
+    "1"
+  );
+  await writeWhitelistFile(
+    JSON.stringify(createPayeesAndSharesObject(1, 91, 91 * 2)),
+    "2"
+  );
+  await writeWhitelistFile(
+    JSON.stringify(createPayeesAndSharesObject(1, 91 * 2, 91 * 3)),
+    "3"
+  );
+  await writeWhitelistFile(
+    JSON.stringify(createPayeesAndSharesObject(1, 91 * 3, 91 * 4)),
+    "4"
+  );
+  await writeWhitelistFile(
+    JSON.stringify(createPayeesAndSharesObject(1, 91 * 4, 91 * 5)),
+    "5"
+  );
+  await writeWhitelistFile(
+    JSON.stringify(createPayeesAndSharesObject(1, 91 * 5, 91 * 6)),
+    "6"
+  );
 })();
 
 console.log({ totalGas: totalGas.toString() });

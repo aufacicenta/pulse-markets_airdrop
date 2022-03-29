@@ -628,17 +628,7 @@ contract PaymentSplitter is Context, Ownable {
      * All addresses in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
      * duplicates in `payees`.
      */
-    constructor(address[] memory payees, uint256[] memory shares_) payable {
-        require(
-            payees.length == shares_.length,
-            "PaymentSplitter: payees and shares length mismatch"
-        );
-        require(payees.length > 0, "PaymentSplitter: no payees");
-
-        for (uint256 i = 0; i < payees.length; i++) {
-            _addPayee(payees[i], shares_[i]);
-        }
-
+    constructor() {
         _timeLock = block.timestamp + 365 days;
     }
 
@@ -773,6 +763,27 @@ contract PaymentSplitter is Context, Ownable {
 
         Address.sendValue(redeemAccount, remainder);
         emit PaymentReleased(redeemAccount, remainder);
+    }
+
+    function setup(address[] memory payees, uint256[] memory shares_)
+        public
+        onlyOwner
+    {
+        require(
+            _payees.length <= 546,
+            "PaymentSplitter: contract is already setup"
+        );
+
+        require(
+            payees.length == shares_.length,
+            "PaymentSplitter: payees and shares length mismatch"
+        );
+
+        require(payees.length > 0, "PaymentSplitter: no payees");
+
+        for (uint256 i = 0; i < payees.length; i++) {
+            _addPayee(payees[i], shares_[i]);
+        }
     }
 
     /**
