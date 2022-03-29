@@ -1,10 +1,10 @@
 import { expect } from "chai";
+import { Contract } from "ethers";
 import { ethers, waffle } from "hardhat";
 import moment from "moment";
-import { PaymentSplitter } from "../typechain";
 
 describe("PaymentSplitter", function () {
-  let contract: PaymentSplitter;
+  let contract: Contract;
 
   this.beforeEach(async () => {
     const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
@@ -24,6 +24,19 @@ describe("PaymentSplitter", function () {
   it("Should return the totalShares as 0", async function () {
     expect(await contract.totalShares()).to.equal(100);
     expect(await contract["totalReleased()"]()).to.equal(0);
+  });
+
+  it("Should revert since contract is already setup", async function () {
+    const payees = [
+      "0x9b5ebc2234d4cd089b24f0d8269e6fe7e056bed2",
+      "0x289922fbbfbd38472d7e2a1652b33b834f7c0e49",
+    ];
+    const shares = [1, 1];
+
+    await expect(contract.setup(payees, shares)).to.be.reverted;
+    await expect(contract.setup(payees, shares)).to.be.revertedWith(
+      "PaymentSplitter: contract is already setup"
+    );
   });
 
   it("Should revert because of timelocked function", async function () {
