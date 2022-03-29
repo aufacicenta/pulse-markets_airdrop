@@ -767,7 +767,6 @@ contract PaymentSplitter is Context, Ownable {
 
     function setup(address[] memory payees, uint256[] memory shares_)
         public
-        payable
         onlyOwner
     {
         require(
