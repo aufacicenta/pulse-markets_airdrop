@@ -1,22 +1,27 @@
 import { expect } from "chai";
 import { ethers, waffle } from "hardhat";
 import moment from "moment";
+import { PaymentSplitter } from "../typechain";
 
 describe("PaymentSplitter", function () {
-  it("Should return the totalShares as 0", async function () {
+  let contract: PaymentSplitter;
+
+  this.beforeAll(async () => {
     const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
-    const contract = await PaymentSplitter.deploy(
-      [
-        "0x9b5ebc2234d4cd089b24f0d8269e6fe7e056bed2",
-        "0x289922fbbfbd38472d7e2a1652b33b834f7c0e49",
-        "0x8bca8ea29b72323b9e75ea79522b020fd7c02c65",
-        "0x2412fcfbf9a9d44abe7619d486b0d21b96b9fbb1",
-      ],
-      [33, 33, 33, 1]
-    );
+    contract = await PaymentSplitter.deploy();
+    const payees = [
+      "0x9b5ebc2234d4cd089b24f0d8269e6fe7e056bed2",
+      "0x289922fbbfbd38472d7e2a1652b33b834f7c0e49",
+      "0x8bca8ea29b72323b9e75ea79522b020fd7c02c65",
+      "0x2412fcfbf9a9d44abe7619d486b0d21b96b9fbb1",
+    ];
+    const shares = [33, 33, 33, 1];
 
     await contract.deployed();
+    await contract.setup(payees, shares);
+  });
 
+  it("Should return the totalShares as 0", async function () {
     expect(await contract.totalShares()).to.equal(100);
     expect(await contract["totalReleased()"]()).to.equal(0);
   });
@@ -25,10 +30,7 @@ describe("PaymentSplitter", function () {
     const contractBalance = 1;
     const [owner] = await ethers.getSigners();
     const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
-    const contract = await PaymentSplitter.deploy(
-      ["0x9b5ebc2234d4cd089b24f0d8269e6fe7e056bed2"],
-      [1]
-    );
+    const contract = await PaymentSplitter.deploy();
 
     await owner.sendTransaction({
       from: owner.address,
@@ -50,10 +52,7 @@ describe("PaymentSplitter", function () {
     const oneYearFromNow = moment().add(365, "days").unix();
     const [owner] = await ethers.getSigners();
     const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
-    const contract = await PaymentSplitter.deploy(
-      ["0x9b5ebc2234d4cd089b24f0d8269e6fe7e056bed2"],
-      [1]
-    );
+    const contract = await PaymentSplitter.deploy();
 
     await ethers.provider.send("evm_increaseTime", [oneYearFromNow]);
 
@@ -70,10 +69,7 @@ describe("PaymentSplitter", function () {
     const oneYearFromNow = moment().add(365, "days").unix();
     const [owner] = await ethers.getSigners();
     const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
-    const contract = await PaymentSplitter.deploy(
-      ["0x9b5ebc2234d4cd089b24f0d8269e6fe7e056bed2"],
-      [1]
-    );
+    const contract = await PaymentSplitter.deploy();
 
     await owner.sendTransaction({
       from: owner.address,
@@ -97,10 +93,7 @@ describe("PaymentSplitter", function () {
     const oneYearFromNow = moment().add(365, "days").unix();
     const [owner, account1] = await ethers.getSigners();
     const PaymentSplitter = await ethers.getContractFactory("PaymentSplitter");
-    const contract = await PaymentSplitter.deploy(
-      ["0x9b5ebc2234d4cd089b24f0d8269e6fe7e056bed2"],
-      [1]
-    );
+    const contract = await PaymentSplitter.deploy();
 
     await owner.sendTransaction({
       from: owner.address,
