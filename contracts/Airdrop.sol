@@ -771,7 +771,7 @@ contract PaymentSplitter is Context, Ownable {
         onlyOwner
     {
         require(
-            _payees.length <= _payeesLengthLimit,
+            _payees.length < _payeesLengthLimit,
             "PaymentSplitter: contract is already setup"
         );
 
